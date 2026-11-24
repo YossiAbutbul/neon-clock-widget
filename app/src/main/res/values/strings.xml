@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Neon Clock</string>
-    <string name="widget_name">Neon Clock</string>
-    <string name="widget_desc">A glowing real-time clock with seconds</string>
+    <string name="app_name">Big Clock</string>
+    <string name="widget_name">Big Clock</string>
+    <string name="widget_desc">Big iPhone-style clock with live seconds</string>
 </resources>

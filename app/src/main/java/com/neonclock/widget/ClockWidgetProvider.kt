@@ -7,13 +7,11 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.provider.AlarmClock
-import android.view.View
 import android.widget.RemoteViews
 
 /**
- * The time itself is drawn by TextClock views, which the launcher ticks every second
- * on its own — so the widget is truly real-time without any polling or battery drain.
- * This provider only applies the chosen theme and the tap action.
+ * The digits are TextClock views, which the launcher ticks by itself, so the time is always
+ * exact and the widget uses no background service. This provider only applies your settings.
  */
 class ClockWidgetProvider : AppWidgetProvider() {
 
@@ -23,17 +21,10 @@ class ClockWidgetProvider : AppWidgetProvider() {
 
     companion object {
         fun buildViews(context: Context): RemoteViews {
-            val theme = ClockThemes.current(context)
-            return RemoteViews(context.packageName, R.layout.widget_clock).apply {
-                setInt(R.id.widget_root, "setBackgroundResource", theme.background)
-                setTextColor(R.id.clock_time, theme.timeColor)
-                setTextColor(R.id.clock_seconds, theme.accentColor)
-                setTextColor(R.id.clock_date, theme.dateColor)
-                setViewVisibility(
-                    R.id.clock_seconds,
-                    if (ClockThemes.showSeconds(context)) View.VISIBLE else View.GONE
-                )
-                // Tap the widget -> open the phone's Clock app (Samsung Clock on Galaxy)
+            val s = ClockSettings.load(context)
+            return RemoteViews(context.packageName, s.layoutId).apply {
+                ClockRenderer.apply(RemoteTarget(this), s)
+                // Tap the clock -> open the phone's Clock app (Samsung Clock on Galaxy)
                 val open = PendingIntent.getActivity(
                     context, 0,
                     Intent(AlarmClock.ACTION_SHOW_ALARMS).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
